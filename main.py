@@ -4,10 +4,13 @@ from agents.run import RunConfig
 from dotenv import load_dotenv
 import chainlit as cl
 from typing import Optional, Dict, Any
+from chainlit import Message
+import asyncio
 
 load_dotenv()
 gemini_api_key = os.getenv('GEMINI_API_KEY')
 user_pass = os.getenv("USER_PASS")
+user_name = os.getenv("USER_NAME")
 
 external_client = AsyncOpenAI(
     api_key=gemini_api_key,
@@ -26,15 +29,15 @@ config = RunConfig(
 )
 
 agent = Agent(
-    name="Student Assistant Agent",
-    instructions="An agent that Helps Students with their studies in a short and concise manner",
+    name="Civil Engineering Specialized Student Assistant Agent",
+    instructions="An agent that Helps Students with their studies in a short and concise manner, made by Uzair Bin Asif",
 )
 
 @cl.password_auth_callback
 def auth_callback(username: str, password: str):
     # Fetch the user matching username from your database
     # and compare the hashed password with the value stored in the database
-    if (username, password) == ("admin", user_pass):
+    if (username, password) == (user_name, user_pass):
         return cl.User(
             identifier="admin", metadata={"role": "admin", "provider": "credentials"}
         )
@@ -55,11 +58,25 @@ def oauth_callback(
     
     return default_user
 
+async def slow_typing(text, delay=0.01):
+    msg = await cl.Message(content='').send()
+    for char in text:
+        msg.content += char
+        await msg.update()
+        await asyncio.sleep(delay)
+
+async def stream_text(text, chunk_size=5, delay=0.05):
+    msg = await Message(content="").send()
+    for i in range(0, len(text), chunk_size):
+        msg.content += text[i:i+chunk_size]
+        await msg.update()
+        await asyncio.sleep(delay)
+
 @cl.on_chat_start
 async def handle_chat_start():
     cl.user_session.set('history', [])
 
-    await cl.Message(content = 'Ask your question from Uzair\'s Agent: ').send()
+    await slow_typing('Ask your question from Uzair\'s Agent: ')
 
 @cl.on_message
 async def handle_message(message: cl.Message):
@@ -82,4 +99,4 @@ async def handle_message(message: cl.Message):
     history.append({'role': 'assistant', 'content': result.final_output})
     cl.user_session.set('history', history)
     
-    await cl.Message(content = result.final_output).send()
+    await stream_text(result.final_output)
