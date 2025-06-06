@@ -1,10 +1,10 @@
 ---
-title: Chainlit App
+title: Civil Specialized Assistant Agent
 emoji: 🚀
 colorFrom: indigo
 colorTo: pink
 sdk: docker
-app_file: app.py
+app_file: main.py
 pinned: false
 ---
 
