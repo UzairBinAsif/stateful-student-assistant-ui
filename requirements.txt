@@ -1,3 +1,4 @@
+uv
 python-dotenv
 openai-agents
 chainlit
