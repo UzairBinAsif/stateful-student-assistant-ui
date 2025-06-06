@@ -10,6 +10,8 @@ COPY . .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+ENV CHAINLIT_FILES_DIR=/tmp/.files
+
 # Expose the port Chainlit will run on
 EXPOSE 7860
 
