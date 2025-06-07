@@ -2,7 +2,6 @@
 # Whether to enable telemetry (default: true). No personal data is collected.
 enable_telemetry = true
 
-
 # List of environment variables to be provided by each user to use the app.
 user_env = []
 
@@ -19,6 +18,11 @@ cache = false
 allow_origins = ["*"]
 
 [features]
+
+# Increase WebSocket timeouts
+websocket_ping_interval = 30
+websocket_ping_timeout = 60
+
 # Process and display HTML in messages. This can be a security risk (see https://stackoverflow.com/questions/19603097/why-is-it-dangerous-to-render-user-generated-html-or-javascript)
 unsafe_allow_html = false
 
