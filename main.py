@@ -80,19 +80,20 @@ async def handle_chat_start():
 
 @cl.on_message
 async def handle_message(message: cl.Message):
-    history = cl.user_session.get('history', [])
-    
-    history.append({'role': 'user', 'content': message.content})
-    
     msg = cl.Message(content="")
     await msg.send()
-
-    # formatted_history = []
-    # for msg in history:
-    #     role = 'user' if msg['role'] == 'user' else 'model'
-    #     formatted_history.append({'role': role, 'parts': [{'text': msg['content']}]})
+    
+    history = cl.user_session.get('history')
+    history.append({'role': 'user', 'content': message.content})
+    
+    formatted_history = []
+    for msg in history:
+        role = 'user' if msg['role'] == 'user' else 'model'
+        formatted_history.append({'role': role, 'parts': [{'text': msg['content']}]})
     
     try:
+        await msg.stream_token("Thinking...")
+        
         prompt = message.content
         result = await asyncio.wait_for(
             asyncio.to_thread(
@@ -103,7 +104,10 @@ async def handle_message(message: cl.Message):
             ),
             timeout=30.0
         )
-
+        
+        print("RAW RESPONSE:", result)
+        print("RESPONSE TYPE:", type(result))
+        
         history.append({'role': 'assistant', 'content': result.final_output})
         cl.user_session.set('history', history)
 
