@@ -1,16 +1,15 @@
 chainlit: 2.0.0
 
-ui:
-  name: "Uzair's Assistant Chatbot"
-  description: "A simple chatbot powered by Gemini LLM"
+project:
+  name: "Civil specialized Assistant Agent"
+  description: "A simple chatbot powered by Gemini"
 
 deafult_expand_messages: true
 
-auth:
-  required: true
-  providers:
-    - github
-    - google
+features:
+  auth:
+    required: true
+    providers: [github, google]
 
 oauth_providers:
   github:

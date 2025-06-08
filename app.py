@@ -78,25 +78,40 @@ async def handle_chat_start():
     # await slow_typing('Hey there, How can Uzair\'s Assistant help you today?')
     await cl.Message(content = 'Hey there, How can Uzair\'s Assistant help you today?').send()
 
-@cl.on_message
-async def handle_message(message: cl.Message):
-    prompt = message.content
-    history = cl.user_session.get('history')    
-    history.append({'role': 'user', 'content': prompt})
+# @cl.on_message
+# async def handle_message(message: cl.Message):
+#     prompt = message.content
+#     history = cl.user_session.get('history')    
+#     history.append({'role': 'user', 'content': prompt})
 
-    formatted_history = []
-    for msg in history:
-        role = 'user' if msg['role'] == 'user' else 'model'
-        formatted_history.append({'role': role, 'parts': [{'text': msg['content']}]})
+#     formatted_history = []
+#     for msg in history:
+#         role = 'user' if msg['role'] == 'user' else 'model'
+#         formatted_history.append({'role': role, 'parts': [{'text': msg['content']}]})
 
-    result = Runner.run_sync(
-                agent,
-                prompt,
-                run_config=config
-            )
-    # text_response = response.text if hasattr(response, 'text') else ''
-    history.append({'role': 'assistant', 'content': result.final_output})
-    cl.user_session.set('history', history)
+#     result = Runner.run_sync(
+#                 agent,
+#                 prompt,
+#                 run_config=config
+#             )
+#     # text_response = response.text if hasattr(response, 'text') else ''
+#     history.append({'role': 'assistant', 'content': result.final_output})
+#     cl.user_session.set('history', history)
     
-    # await stream_text(result.final_output)
-    await cl.Message(content = result.final_output).send()
+#     # await stream_text(result.final_output)
+#     await cl.Message(content = result.final_output).send()
+
+async def handle_message(message: cl.Message):
+    msg = cl.Message(content="")
+    await msg.send()
+    
+    try:
+        result = await asyncio.to_thread(
+            Runner.run_sync,
+            agent,
+            message.content,
+            run_config=config
+        )
+        await msg.stream_token(result.final_output)
+    except Exception as e:
+        await msg.stream_token(f"Error: {str(e)}")
