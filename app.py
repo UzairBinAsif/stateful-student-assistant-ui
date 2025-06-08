@@ -101,6 +101,7 @@ async def handle_chat_start():
 #     # await stream_text(result.final_output)
 #     await cl.Message(content = result.final_output).send()
 
+@cl.on_message
 async def handle_message(message: cl.Message):
     msg = cl.Message(content="")
     await msg.send()
