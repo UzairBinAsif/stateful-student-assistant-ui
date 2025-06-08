@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Update Dockerfile
 ENV CHAINLIT_NO_WEBSOCKET_CHECK=true
-ENV CHAINLIT_MAX_HTTP_BUFFER_SIZE=104857600  # 100MB for file uploads
+ENV CHAINLIT_MAX_HTTP_BUFFER_SIZE=104857600
 
 # Make sure /app is writable
 # RUN chmod -R 777 /app
