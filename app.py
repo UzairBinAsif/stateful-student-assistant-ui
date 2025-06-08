@@ -32,51 +32,51 @@ agent = Agent(
     instructions="An agent that Helps Students with their studies in a short and concise manner, made by Uzair Bin Asif",
 )
 
-@cl.password_auth_callback
-def auth_callback(username: str, password: str):
-    # Fetch the user matching username from your database
-    # and compare the hashed password with the value stored in the database
-    if (username, password) == (user_name, user_pass):
-        return cl.User(
-            identifier="admin", metadata={"role": "admin", "provider": "credentials"}
-        )
-    else:
-        return None
+# @cl.password_auth_callback
+# def auth_callback(username: str, password: str):
+#     # Fetch the user matching username from your database
+#     # and compare the hashed password with the value stored in the database
+#     if (username, password) == (user_name, user_pass):
+#         return cl.User(
+#             identifier="admin", metadata={"role": "admin", "provider": "credentials"}
+#         )
+#     else:
+#         return None
 
-@cl.oauth_callback
-def oauth_callback(
-    provider_id: str,
-    token: str,
-    raw_user_data: Dict[str, str],
-    default_user: cl.User
-) -> Optional[cl.User]:
-    '''Handle the OAuth callback from github'''
+# @cl.oauth_callback
+# def oauth_callback(
+#     provider_id: str,
+#     token: str,
+#     raw_user_data: Dict[str, str],
+#     default_user: cl.User
+# ) -> Optional[cl.User]:
+#     '''Handle the OAuth callback from github'''
     
-    print(f'Provider: {provider_id}')
-    print(f'User data: {raw_user_data}')
+#     print(f'Provider: {provider_id}')
+#     print(f'User data: {raw_user_data}')
     
-    return default_user
+#     return default_user
 
-async def slow_typing(text, delay=0.01):
-    msg = await cl.Message(content='').send()
-    for char in text:
-        msg.content += char
-        await msg.update()
-        await asyncio.sleep(delay)
+# async def slow_typing(text, delay=0.01):
+#     msg = await cl.Message(content='').send()
+#     for char in text:
+#         msg.content += char
+#         await msg.update()
+#         await asyncio.sleep(delay)
 
-async def stream_text(text, chunk_size=5, delay=0.05):
-    msg = await Message(content="").send()
-    for i in range(0, len(text), chunk_size):
-        msg.content += text[i:i+chunk_size]
-        await msg.update()
-        await asyncio.sleep(delay)
+# async def stream_text(text, chunk_size=5, delay=0.05):
+#     msg = await Message(content="").send()
+#     for i in range(0, len(text), chunk_size):
+#         msg.content += text[i:i+chunk_size]
+#         await msg.update()
+#         await asyncio.sleep(delay)
 
 @cl.on_chat_start
 async def handle_chat_start():
     cl.user_session.set('history', [])
 
-    # await cl.Message(content = 'Hey there, How can Uzair\'s Assistant help you today?').send()
-    slow_typing('Hey there, How can Uzair\'s Assistant help you today?')
+    # await slow_typing('Hey there, How can Uzair\'s Assistant help you today?')
+    await cl.Message(content = 'Hey there, How can Uzair\'s Assistant help you today?').send()
 
 @cl.on_message
 async def handle_message(message: cl.Message):
@@ -98,5 +98,5 @@ async def handle_message(message: cl.Message):
     history.append({'role': 'assistant', 'content': result.final_output})
     cl.user_session.set('history', history)
     
-    # await cl.Message(content = result.final_output).send()
-    stream_text(result.final_output)
+    # await stream_text(result.final_output)
+    await cl.Message(content = result.final_output).send()
