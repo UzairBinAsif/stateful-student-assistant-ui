@@ -76,7 +76,7 @@ async def handle_chat_start():
     cl.user_session.set('history', [])
 
     # await cl.Message(content = 'Hey there, How can Uzair\'s Assistant help you today?').send()
-    await slow_typing('Hey there, How can Uzair\'s Assistant help you today?')
+    slow_typing('Hey there, How can Uzair\'s Assistant help you today?')
 
 @cl.on_message
 async def handle_message(message: cl.Message):
@@ -99,4 +99,4 @@ async def handle_message(message: cl.Message):
     cl.user_session.set('history', history)
     
     # await cl.Message(content = result.final_output).send()
-    await stream_text(result.final_output)
+    stream_text(result.final_output)
